@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PNB Shoaib CSC Customer Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --pnb-primary: #8A1538; /* PNB Maroon */
+      --pnb-secondary: #FFD700; /* PNB Gold */
+      --pnb-light: #F8F9FA;
+      --pnb-dark: #212529;
+    }
+
+    body {
+      font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--pnb-dark);
+      background-color: #f5f5f5;
+    }
+
+    .navbar {
+      background-color: var(--pnb-primary);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: white !important;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-brand img {
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-size: 1.1rem;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .card {
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      border-left: 4px solid var(--pnb-primary);
+    }
+
+    .card-header {
+      background-color: var(--pnb-primary);
+      color: white;
+      border-radius: 8px 8px 0 0 !important;
+      padding: 12px 20px;
+      font-weight: 600;
+    }
+
+    .btn-pnb-primary {
+      background-color: var(--pnb-primary);
+      border-color: var(--pnb-primary);
+      color: white;
+    }
+
+    .btn-pnb-primary:hover {
+      background-color: #7a1230;
+      border-color: #7a1230;
+      color: white;
+    }
+
+    .btn-pnb-secondary {
+      background-color: var(--pnb-secondary);
+      border-color: var(--pnb-secondary);
+      color: var(--pnb-dark);
+    }
+
+    .btn-pnb-secondary:hover {
+      background-color: #e6c200;
+      border-color: #e6c200;
+      color: var(--pnb-dark);
+    }
+
+    /* Bulk selection styles */
+    .bulk-checkbox {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+    }
+
+    .bulk-icon {
+      font-size: 1.2rem;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    .bulk-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bulk-actions button {
+      margin: 0;
+    }
+
+    .btn {
+      border-radius: 4px;
+    }
+
+    /* Additional table styling (optional) */
+    table tr {
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="https://pnbprofile.s3.ap-south-1.amazonaws.com/logo.png" alt="PNB Logo">
+        <div class="brand-text">
+          <span class="brand-name">PNB Shoaib</span>
+          <span class="brand-subtitle">CSC Customer Management</span>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <div class="container mt-5 pt-4">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Customer Management</h2>
+      </div>
+    </div>
+    
+    <!-- Buttons -->
+    <div class="row mt-4 mb-2">
+      <div class="col-md-4 col-sm-6 mb-2">
+        <button id="addCustomerBtn" type="button" class="btn btn-pnb-primary w-100" data-bs-toggle="modal" data-bs-target="#customerModal">Add Customer</button>
+      </div>
+      <div class="col-md-4 col-sm-6 mb-2">
+        <button id="viewAllCustomersBtn" type="button" class="btn btn-pnb-secondary w-100">View All Customers</button>
+      </div>
+      <div class="col-md-4 col-sm-6 mb-2">
+        <div class="btn-group w-100">
+          <button id="downloadTemplateMenuBtn" class="btn btn-outline-secondary dropdown-toggle w-100" data-bs-toggle="dropdown" aria-expanded="false">Import/Export</button>
+          <ul class="dropdown-menu w-100">
+            <li><a class="dropdown-item" href="#" id="downloadTemplateBtn">Download Template</a></li>
+            <li><a class="dropdown-item" href="#" id="exportDataBtn">Export Data</a></li>
+            <li><a class="dropdown-item" href="#" id="importMenuBtn" data-bs-toggle="modal" data-bs-target="#importModal">Import Data</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards for search and stats -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Search Customer</div>
+          <div class="card-body">
+            <div class="input-group">
+              <input type="text" id="searchInput" class="form-control" placeholder="Customer ID or Mobile Number">
+              <button id="searchBtn" class="btn btn-pnb-primary">Search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Customer Count</div>
+          <div class="card-body">
+            <button id="customerCountBtn" class="btn btn-pnb-secondary">Count Customers <span class="badge text-bg-light" id="customerCountBadge"></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Customer Table -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between">
+            <span>Customer List</span>
+            <button id="bulkDeleteBtn" class="btn btn-pnb-primary btn-sm"><i class="fas fa-trash"></i> Delete Selected <span class="badge badge-light ml-1" id="deleteCount"></span></button>
+          </div>
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" class="bulk-checkbox" id="selectAllCheckbox"></th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Mobile Number</th>
+                  <th>Email</th>
+                  <th>City</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="customerListBody">
+                <!-- Customers will be listed here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Customer Form Modal -->
+  <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="customerModalLabel">Customer Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="customerForm">
+            <div class="mb-3">
+              <label for="customerName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="customerName" required>
+            </div>
+            <div class="mb-3">
+              <label for="customerMobile" class="form-label">Mobile Number</label>
+              <input type="text" class="form-control" id="customerMobile" required>
+            </div>
+            <div class="mb-3">
+              <label for="customerEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="customerEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="customerCity" class="form-label">City</label>
+              <input type="text" class="form-control" id="customerCity" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-pnb-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="saveCustomerBtn" class="btn btn-pnb-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import/Export Modal -->
+  <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="importModalLabel">Import Customers</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="importFile" class="form-label">Select Excel File</label>
+            <input type="file" class="form-control" id="importFile" accept=".xlsx">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-pnb-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="processImportBtn" class="btn btn-pnb-primary">Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal for Bulk Delete -->
+  <div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bulkDeleteModalLabel">Confirm Bulk Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete the selected customers?</p>
+          <p>This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-pnb-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="confirmDeleteBtn" class="btn btn-pnb-primary">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase and App scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQAJym4PgqblkfMY7VKRWEMURG8GJ9vU4",
+      authDomain: "custumermanagement.firebaseapp.com",
+      projectId: "custumermanagement",
+      storageBucket: "custumermanagement.appspot.com",
+      messagingSenderId: "520929530997",
+      appId: "1:520929530997:web:46bb12e02c0d4bc2e9143c"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Initialize tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Initialize modals
+      const customerModal = new bootstrap.Modal(document.getElementById('customerModal'));
+      const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+      const bulkDeleteModal = new bootstrap.Modal(document.getElementById('bulkDeleteModal'));
+
+      // DOM elements
+      const addCustomerBtn = document.getElementById('addCustomerBtn');
+      const saveCustomerBtn = document.getElementById('saveCustomerBtn');
+      const customerForm = document.getElementById('customerForm');
+      const searchBtn = document.getElementById('searchBtn');
+      const searchInput = document.getElementById('searchInput');
+      const resultsList = document.getElementById('results');
+      const viewAllCustomersBtn = document.getElementById('viewAllCustomersBtn');
+      const allCustomersCard = document.getElementById('allCustomersCard');
+      const closeAllCustomersBtn = document.getElementById('closeAllCustomersBtn');
+      const customerListBody = document.getElementById('customerListBody');
+      const customerCountBtn = document.getElementById('customerCountBtn');
+      const customerCountBadge = document.getElementById('customerCountBadge');
+      const importMenuBtn = document.getElementById('importMenuBtn');
+      const downloadTemplateMenuBtn = document.getElementById('downloadTemplateMenuBtn');
+      const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+      const exportDataBtn = document.getElementById('exportDataBtn');
+      const importFile = document.getElementById('importFile');
+      const processImportBtn = document.getElementById('processImportBtn');
+      const importProgress = document.getElementById('importProgress');
+      const importResults = document.getElementById('importResults');
+      const importTotal = document.getElementById('importTotal');
+      const importSuccess = document.getElementById('importSuccess');
+      const importFailed = document.getElementById('importFailed');
+
+      // Bulk delete elements
+      const bulkActionsPanel = document.getElementById('bulkActionsPanel');
+      const selectedCount = document.getElementById('selectedCount');
+      const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      const cancelBulkActionBtn = document.getElementById('cancelBulkActionBtn');
+      const finalConfirmDeleteBtn = document.getElementById('finalConfirmDeleteBtn');
+      const deleteCount = document.getElementById('deleteCount');
+
+      let selectedCustomers = new Set();
+      let allCustomersData = [];
+
+      // Load customer count
+      function loadCustomerCount() {
+        db.collection("customers").get().then((querySnapshot) => {
+          const count = querySnapshot.size;
+          customerCountBadge.textContent = count;
+        }).catch((error) => {
+          console.error("Error getting customer count: ", error);
+        });
+      }
+      
+      // Load all customers and populate table
+      function loadAllCustomers() {
+        db.collection("customers").get().then((querySnapshot) => {
+          // Clear existing table rows
+          customerListBody.innerHTML = "";
+          allCustomersData = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            allCustomersData.push({ id: doc.id, ...data });
+            const row = `
+              <tr data-id="${doc.id}">
+                <td><input type="checkbox" class="bulk-checkbox" data-id="${doc.id}"></td>
+                <td>${doc.id}</td>
+                <td>${data.name}</td>
+                <td>${data.mobile}</td>
+                <td>${data.email}</td>
+                <td>${data.city}</td>
+                <td>
+                  <button class="btn btn-sm btn-pnb-primary edit-btn" data-id="${doc.id}">Edit</button>
+                  <button class="btn btn-sm btn-pnb-secondary delete-btn" data-id="${doc.id}">Delete</button>
+                </td>
+              </tr>
+            `;
+            customerListBody.insertAdjacentHTML("beforeend", row);
+          });
+        }).catch((error) => {
+          console.error("Error loading customers: ", error);
+        });
+      }
+
+      // Initial load of all customers
+      loadAllCustomers();
+      loadCustomerCount();
+
+      // Add event listeners for search, add, and edit functions...
+
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
